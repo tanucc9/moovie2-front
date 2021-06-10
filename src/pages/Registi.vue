@@ -1,16 +1,64 @@
 <template>
   <q-page>
+    
+    <!--- Titolo e pulsante per filtrare --->
     <div class="row justify-center title-row">  
         <div class="q-pa-md q-gutter-sm">
             <h3 class="text-center">Classifica Best Director</h3>
         </div>
         <div class="q-pa-md q-gutter-sm">
-            <q-btn outline color="primary" class="filter-year-btn">
-                <div class="text-btn">Filtra per anno</div>
-                <span class="material-icons calendar-icon">today</span>
+            <q-btn outline color="primary" class="filter-year-btn" @click="isFilterYearVisible = !isFilterYearVisible">
+                <div class="text-btn" v-if="!isFilterYearVisible">Filtra per anno</div>
+                <div class="text-btn" v-else>Chiudi Filtro</div>
+                <span class="material-icons calendar-icon" v-if="!isFilterYearVisible">today</span>
             </q-btn>
         </div>
     </div>
+    <!--- END Titolo e pulsante per filtrare --->
+
+    <!--- Filtro per anno --->
+    <transition
+        appear
+        leave-active-class="animated zoomOut"
+    >
+        <div class="row justify-center q-mb-xl" v-if="isFilterYearVisible">
+            <div class="q-gutter-y-md wrap-filters wrap-filter-left">
+                <transition
+                    appear
+                    enter-active-class="animated slideInLeft"
+                >
+                    <q-input rounded filled v-model="dataInizio" label="Anno d'inizio">
+                        <template v-slot:prepend>
+                            <q-icon name="event" />
+                        </template>
+                    </q-input>
+                </transition>
+            </div>
+            <div class="q-gutter-y-md wrap-filters wrap-filter-right">
+                <transition
+                    appear
+                    enter-active-class="animated slideInRight"
+                >
+                    <q-input rounded filled v-model="dataFine" label="Anno di fine">
+                        <template v-slot:prepend>
+                            <q-icon name="event" />
+                        </template>
+                    </q-input>
+                </transition>
+            </div>
+            <div class="q-gutter-y-md column justify-center">
+                <transition
+                    appear
+                    enter-active-class="animated slideInRight"
+                >
+                    <q-btn push color="primary" label="Applica" />
+                </transition>
+            </div>
+        </div>
+    </transition>
+    <!--- END Filtro per anno --->
+
+    <!--- Body classifica best director --->
     <div class="row items-end">
       <div class="col" v-for="(director, index) in mockBestDirector" :key="index">
         <q-card class="my-card" :class="{ 'float-right' : index === 0, 'center-card' : index === 1 }">
@@ -36,20 +84,19 @@
                 </q-circular-progress>
             </div>
             
-
             <q-card-section class="q-pt-none">
                 <q-chip square>
                     <q-avatar color="blue" text-color="white">{{director[1]}}</q-avatar>
                     film girati
                 </q-chip>
 
-
             </q-card-section>
         </q-card>
-    </div>
+      </div>
 
     </div>
-    
+    <!--- END Body classifica best director --->
+
   </q-page>
 </template>
 
@@ -58,7 +105,9 @@ export default {
   name: 'Registi',
   data() {
       return {
-          text : '',
+          dataInizio : '',
+          dataFine : '',
+          isFilterYearVisible : false,
           counter : 2,
           mockBestDirector : [
             ['Lello Kawasaki', 21, 9.3],
@@ -114,5 +163,16 @@ export default {
 
     .title-row button {
         margin-top: 17px;
+    }
+
+    .wrap-filters {
+        max-width: 300px;
+    }
+    .wrap-filter-left {
+        margin-right: 10px;
+    }
+    .wrap-filter-right {
+        margin-left: 10px;
+        margin-right: 20px;
     }
 </style>
