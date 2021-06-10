@@ -24,9 +24,9 @@
         </q-toolbar>
 
         <q-tabs v-model="tab">
-          <q-tab name="film" label="Film" />
-          <q-tab name="attori" label="Attori" />
-          <q-tab name="registi" label="Registi" />
+          <q-route-tab to="/" name="film" label="Film" />
+          <q-route-tab to="/" name="attori" label="Attori" />
+          <q-route-tab to="/registi" name="registi" label="Registi" />
         </q-tabs>
       </q-header>
 </template>
