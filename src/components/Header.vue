@@ -1,7 +1,7 @@
 <template>
-          <q-header elevated>
+        <q-header elevated>
         <q-toolbar>
-          <q-btn flat round dense icon="menu" class="q-mr-sm" />
+          <q-btn flat round dense icon="menu" class="q-mr-sm" @click="setDrawer"/>
           <q-avatar>
             <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg">
           </q-avatar>
@@ -38,7 +38,14 @@ export default {
       tab: 'film',
       searchText: '',
       activeSearchBar: false,
+      left: false,
     }
+  },
+  methods: {
+      setDrawer(event) {
+          this.left = !this.left;
+          this.$emit('setDrawer', this.left);
+      }
   }
 }
 </script>

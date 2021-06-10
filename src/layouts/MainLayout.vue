@@ -1,12 +1,16 @@
 <template>
-    <q-layout view="lHh lpr lFf" class="shadow-2 rounded-borders">
+    <q-layout view="hHh LpR fff" class="shadow-2 rounded-borders">
       
-      <Header />
-      
+      <Header @setDrawer="setDrawer" />
+      <q-drawer v-model="left" side="left" elevated>
+      <!-- drawer content -->
+      <h3>todo</h3>
+      </q-drawer>
+
       <q-page-container>
         <router-view />
       </q-page-container>
-      
+
     </q-layout>
 </template>
 
@@ -16,6 +20,16 @@ import Header from '../components/Header.vue'
 export default {
   components : {
     Header
-  }  
+  },
+  data() {
+    return {
+      left: false,
+    }
+  },
+  methods: {
+    setDrawer(value) {
+      this.left = value;
+    }
+  }
 }
 </script>
