@@ -46,12 +46,12 @@
                     </q-input>
                 </transition>
             </div>
-            <div class="q-gutter-y-md column justify-center">
+            <div class="q-gutter-y-md column justify-center container-btn-filter">
                 <transition
                     appear
                     enter-active-class="animated slideInRight"
                 >
-                    <q-btn push color="primary" label="Applica" />
+                    <q-btn push color="primary" label="Applica" id="btn-filtro-data"/>
                 </transition>
             </div>
         </div>
@@ -59,8 +59,8 @@
     <!--- END Filtro per anno --->
 
     <!--- Body classifica best director --->
-    <div class="row items-end">
-      <div class="col" v-for="(director, index) in mockBestDirector" :key="index">
+    <div class="row items-end" id="section-best-director">
+      <div class="col-md-4" v-for="(director, index) in mockBestDirector" :key="index">
         <q-card class="my-card" :class="{ 'float-right' : index === 0, 'center-card' : index === 1 }">
             <q-badge class="custom-badge-rounded" :class="{'bg-yellow-14' : index === 0, 'bg-grey-13' : index === 1, 'bg-brown-6' : index === 2}" floating >
                 {{index + 1}}
@@ -100,78 +100,27 @@
     </div>
     <!--- END Body classifica best director --->
 
-    <!--- Sezione registi con più film girati --->
-      
-    <div class="q-pa-md q-gutter-sm" style="margin-top: 50px">
-        <h3 class="text-center">I 5 registi con più film girati</h3>
-    </div>
-
-    <div class="row items-end justify-around">
-      <div class="col-2" v-for="(director, index) in mockMostFilms" :key="index">
-        <q-card class="my-card q-mb-xl">
-
-            <span class="material-icons account_circle">account_circle</span>
-            <q-card-section class="wrap-title-director">
-                <div class="text-h6">{{director[0]}}</div>
-            </q-card-section>
-            
-            <q-card-section class="q-pt-none q-mt-md">
-                <q-chip square>
-                    <q-avatar color="blue" text-color="white">{{director[1]}}</q-avatar>
-                    film girati
-                </q-chip>
-
-            </q-card-section>
-        </q-card>
-      </div>
-
-    </div>
+    <!--- Sezione registi con più film girati ---> 
+    <RegistiList :datas="mockMostFilms" :isMostFilms="true" titleList ="I 5 registi con più film girati" />
     <!--- END Sezione registi con più film girati --->
 
 
     <!--- Sezione registi con media più alta --->
-    <div class="q-pa-md q-gutter-sm" style="margin-top: 50px">
-        <h3 class="text-center">I 5 registi con la media più alta su un film</h3>
-    </div>
-
-    <div class="row items-end justify-around">
-      <div class="col-2" v-for="(director, index) in mockMediaFilms" :key="index">
-        <q-card class="my-card q-mb-xl">
-
-            <span class="material-icons account_circle">account_circle</span>
-            <q-card-section class="wrap-title-director">
-                <div class="text-h6">{{director[0]}}</div>
-            </q-card-section>
-            
-            <q-card-section class="q-pt-none q-mt-md">
-                <div class="row items-center justify-center">
-                    <p class="voto-medio">
-                        Voto:
-                    </p>
-                    <q-circular-progress
-                    show-value
-                    class="text-light-blue q-ma-md"
-                    :value="director[1] * 10"
-                    size="50px"
-                    color="blue"
-                    track-color="grey-3"
-                    >
-                        {{director[1]}}
-                    </q-circular-progress>
-                </div>
-            </q-card-section>
-        </q-card>
-      </div>
-
-    </div>
+    <RegistiList :datas="mockMediaFilms" :isMostFilms="false" titleList ="I 5 registi con la media più alta su un film" />
     <!--- END Sezione registi con con media più alta --->
 
-  </q-page>
+    </q-page>
 </template>
 
 <script>
+import RegistiList from '../components/RegistiList.vue';
+
 export default {
+  components: { RegistiList },
   name: 'Registi',
+  components : {
+      RegistiList,
+    },
   data() {
       return {
           dataInizio : '',
@@ -196,13 +145,14 @@ export default {
             ['Peppe', 8],
             ['Mario Rossi', 8],
             ['Pepito Rossi', 7.7]
-          ]
+          ],
       }
   },
 }
 </script>
 
 <style scoped>
+
     .row {
         max-width: 1300px;
         margin: auto;
@@ -261,5 +211,34 @@ export default {
     .wrap-filter-right {
         margin-left: 10px;
         margin-right: 20px;
+    }
+
+    @media (max-width: 768px) {
+        #section-best-director {
+            justify-content: space-around;
+        }
+
+        #section-best-director .col-md-4 {
+            margin-bottom: 30px;
+        }
+        .wrap-filter-left, .wrap-filter-right {
+            width: 100%;
+        }
+        .wrap-filter-left {
+            margin-bottom: 30px;
+        }
+        .wrap-filter-right {
+            margin-bottom: 15px;
+        }
+
+        .container-btn-filter {
+            width: 120px;
+        }
+        .title-row h3 {
+            margin-bottom: 0;
+        }
+        .filter-year-btn {
+            margin-bottom: 20px;
+        }
     }
 </style>
