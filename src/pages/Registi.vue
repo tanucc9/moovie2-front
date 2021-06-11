@@ -21,7 +21,7 @@
         appear
         leave-active-class="animated zoomOut"
     >
-        <div class="row justify-center q-mb-xl" v-if="isFilterYearVisible">
+        <div class="row justify-center q-pb-xl" v-if="isFilterYearVisible">
             <div class="q-gutter-y-md wrap-filters wrap-filter-left">
                 <transition
                     appear
@@ -71,7 +71,10 @@
                 <div class="text-h6">{{director[0]}}</div>
             </q-card-section>
             <div class="row items-center justify-center">
-                <p class="voto-medio">Voto medio:</p>
+                <p class="voto-medio">
+                    Voto:
+                    <q-tooltip anchor="bottom middle" self="center middle">Il voto è stato ottenuto calcolando il voto medio finale in base ai voti dei singoli film.</q-tooltip>
+                </p>
                 <q-circular-progress
                 show-value
                 class="text-light-blue q-ma-md"
@@ -97,6 +100,72 @@
     </div>
     <!--- END Body classifica best director --->
 
+    <!--- Sezione registi con più film girati --->
+      
+    <div class="q-pa-md q-gutter-sm" style="margin-top: 50px">
+        <h3 class="text-center">I 5 registi con più film girati</h3>
+    </div>
+
+    <div class="row items-end justify-around">
+      <div class="col-2" v-for="(director, index) in mockMostFilms" :key="index">
+        <q-card class="my-card q-mb-xl">
+
+            <span class="material-icons account_circle">account_circle</span>
+            <q-card-section class="wrap-title-director">
+                <div class="text-h6">{{director[0]}}</div>
+            </q-card-section>
+            
+            <q-card-section class="q-pt-none q-mt-md">
+                <q-chip square>
+                    <q-avatar color="blue" text-color="white">{{director[1]}}</q-avatar>
+                    film girati
+                </q-chip>
+
+            </q-card-section>
+        </q-card>
+      </div>
+
+    </div>
+    <!--- END Sezione registi con più film girati --->
+
+
+    <!--- Sezione registi con media più alta --->
+    <div class="q-pa-md q-gutter-sm" style="margin-top: 50px">
+        <h3 class="text-center">I 5 registi con la media più alta su un film</h3>
+    </div>
+
+    <div class="row items-end justify-around">
+      <div class="col-2" v-for="(director, index) in mockMediaFilms" :key="index">
+        <q-card class="my-card q-mb-xl">
+
+            <span class="material-icons account_circle">account_circle</span>
+            <q-card-section class="wrap-title-director">
+                <div class="text-h6">{{director[0]}}</div>
+            </q-card-section>
+            
+            <q-card-section class="q-pt-none q-mt-md">
+                <div class="row items-center justify-center">
+                    <p class="voto-medio">
+                        Voto:
+                    </p>
+                    <q-circular-progress
+                    show-value
+                    class="text-light-blue q-ma-md"
+                    :value="director[1] * 10"
+                    size="50px"
+                    color="blue"
+                    track-color="grey-3"
+                    >
+                        {{director[1]}}
+                    </q-circular-progress>
+                </div>
+            </q-card-section>
+        </q-card>
+      </div>
+
+    </div>
+    <!--- END Sezione registi con con media più alta --->
+
   </q-page>
 </template>
 
@@ -113,6 +182,20 @@ export default {
             ['Lello Kawasaki', 21, 9.3],
             ['Toni Colombo', 30, 8.5],
             ['Peppe', 3, 7.0]
+          ],
+          mockMostFilms : [
+            ['Lello Kawasaki', 121],
+            ['Toni Colombo', 92],
+            ['Peppe', 65],
+            ['Mario Rossi', 44],
+            ['Pepito Rossi', 39]
+          ],
+           mockMediaFilms : [
+            ['Lello Kawasaki', 9.8],
+            ['Toni Colombo', 8.9],
+            ['Peppe', 8],
+            ['Mario Rossi', 8],
+            ['Pepito Rossi', 7.7]
           ]
       }
   },
@@ -120,6 +203,10 @@ export default {
 </script>
 
 <style scoped>
+    .row {
+        max-width: 1300px;
+        margin: auto;
+    }
     .my-card {
         width: 230px;
         text-align: center;
