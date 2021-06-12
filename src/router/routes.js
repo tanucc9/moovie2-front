@@ -14,6 +14,14 @@ const routes = [
     ]
   },
 
+  {
+    path: '/Attori',
+    component: () => import('src/layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/Attori.vue') }
+    ]
+  },
+
   // Always leave this as last one,
   // but you can also remove it
   {

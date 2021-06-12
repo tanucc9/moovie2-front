@@ -25,7 +25,7 @@
 
         <q-tabs v-model="tab">
           <q-route-tab to="/" name="film" label="Film" />
-          <q-route-tab to="/" name="attori" label="Attori" />
+          <q-route-tab to="/attori" name="attori" label="Attori" />
           <q-route-tab to="/registi" name="registi" label="Registi" />
         </q-tabs>
       </q-header>

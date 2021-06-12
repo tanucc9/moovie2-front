@@ -10,7 +10,7 @@
             <q-btn outline color="primary" class="filter-year-btn" @click="isFilterYearVisible = !isFilterYearVisible">
                 <div class="text-btn" v-if="!isFilterYearVisible">Filtra per anno</div>
                 <div class="text-btn" v-else>Chiudi Filtro</div>
-                <span class="material-icons calendar-icon" v-if="!isFilterYearVisible">today</span>
+                <span class="material-icons calendar-icon" v-show="!isFilterYearVisible">today</span>
             </q-btn>
         </div>
     </div>
