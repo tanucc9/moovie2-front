@@ -189,6 +189,13 @@ export default {
         margin-top: 30px;
     }
 
+    @media (max-width: 1300px) {
+        .container-attori {
+            margin-left: 15px;
+            margin-right: 15px;
+        }
+    }
+
     @media (max-width: 599px) {
         .left-side, .right-side {
             padding: 0 0;

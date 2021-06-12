@@ -1,7 +1,7 @@
 <template>
         <q-header elevated>
         <q-toolbar>
-          <q-btn flat round dense icon="menu" class="q-mr-sm" @click="setDrawer"/>
+           <!--- <q-btn flat round dense icon="menu" class="q-mr-sm" @click="setDrawer"/> ---> 
           <q-avatar>
             <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg">
           </q-avatar>
