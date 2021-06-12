@@ -2,7 +2,7 @@
     <div class="section-filter">
         <h5>Filtra attori</h5>
     <div class="row justify-evenly box-filter">
-      <div class="col-md-2">
+      <div class="col-sm-2 full-mobile">
         <q-input 
             rounded
             filled
@@ -14,7 +14,7 @@
             </template>
         </q-input>
       </div>
-      <div class="col-md-2">
+      <div class="col-sm-2 full-mobile genere-wrap">
         <q-select
             label="Genere Film"
             transition-show="flip-up"
@@ -25,7 +25,7 @@
             :options="optionsGenere"
         />
       </div>
-      <div class="col-md-2">
+      <div class="col-sm-2 full-mobile">
             <q-input 
                 rounded
                 filled
@@ -76,5 +76,21 @@ export default {
         border-radius: 5px;
         padding-bottom: 15px;
         padding-top: 15px;
+    }
+
+    @media (max-width: 1300px) {
+        .section-filter {
+            margin-left: 15px;
+            margin-right: 15px;
+        }
+    }
+    
+    @media (max-width: 599px) {
+        .full-mobile {
+            width: 90%;
+        }
+        .genere-wrap {
+            margin-bottom: 20px;
+        }
     }
 </style>

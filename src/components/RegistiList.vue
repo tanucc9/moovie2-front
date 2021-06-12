@@ -1,5 +1,5 @@
 <template>
-    <q-page-container>
+    <div>
             <div class="q-pa-md q-gutter-sm" style="margin-top: 50px">
         <h3 class="text-center">{{ titleList }}</h3>
     </div>
@@ -40,7 +40,7 @@
       </div>
 
     </div>
-    </q-page-container>
+    </div>
 </template>
 
 <script>
