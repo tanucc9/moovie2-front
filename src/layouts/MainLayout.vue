@@ -2,10 +2,7 @@
   <q-layout view="hHh LpR fff" class="shadow-2 rounded-borders">
 
     <Header @setDrawer="setDrawer"/>
-    <q-drawer v-model="left" side="left" elevated>
-      <!-- TODO drawer content -->
-      <h3>todo</h3>
-    </q-drawer>
+    <q-drawer v-model="left" side="left" elevated></q-drawer>
 
     <q-page-container>
       <router-view/>
