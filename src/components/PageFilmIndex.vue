@@ -101,7 +101,6 @@
                 : (props.row.attori.join(', '))
             }}
           </q-td>
-
           <q-td key="action">
             <q-btn
               flat

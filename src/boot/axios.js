@@ -21,4 +21,7 @@ Vue.prototype.$api = {
   loadFilm: (id) => apiAxiosInstance.get('film/' + encodeURIComponent(id))
     .then(response => response.data),
 
+  loadGeneriVotiFilteredFilms: (genere, votiMinimi) => apiAxiosInstance
+    .get('film/genere/' + genere + '/voti-minimi/' + votiMinimi).then(response => response.data),
+
 }
