@@ -1,15 +1,24 @@
 <template>
-  <q-page class="flex flex-center">
-    <img
-      alt="Quasar logo"
-      src="~assets/quasar-logo-vertical.svg"
-      style="width: 200px; height: 200px"
-    >
+  <q-page style="max-width: 1300px; margin: auto">
+    <q-tabs v-model="tab" class="q-mt-lg">
+      <q-tab name="films_table" label="Tabella di film" />
+      <q-tab name="voti" label="Voti" />
+    </q-tabs>
+
+    <PageFilmIndex v-if="tab === 'films_table'"/>
   </q-page>
 </template>
 
 <script>
+import PageFilmIndex from "components/PageFilmIndex";
+
 export default {
-  name: 'PageIndex'
+  name: 'PageIndex',
+  components: {PageFilmIndex},
+  data() {
+    return {
+      tab: 'films_table',
+    };
+  },
 }
 </script>
