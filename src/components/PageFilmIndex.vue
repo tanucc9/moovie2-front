@@ -1,5 +1,27 @@
 <template>
   <div>
+    <q-dialog v-model="showSearch" persistent>
+      <q-card style="width: 700px; max-width: 80vw;">
+        <q-card-section class="row items-center bg-black text-white">
+          <div class="text-h6">Ricerca</div>
+        </q-card-section>
+        <q-card-section>
+          <div class="q-pa-md">
+            <q-form class="q-gutter-md" @submit="loadPaginatedFilms" @reset="resetSearch">
+              <q-input label="Titolo" filled v-model="searchTitolo"/>
+              <q-input label="Genere" filled v-model="searchGenere"/>
+              <q-input label="Anno" filled v-model="searchAnno"
+                       :rules="[val => /^[0-9]*$/.test(val) || 'Inserisci un anno valido']"/>
+              <div>
+                <q-btn label="Applica" type="submit" color="primary"/>
+                <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm"/>
+              </div>
+            </q-form>
+          </div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
     <q-dialog v-if="viewFilm" v-model="viewFilmOpen">
       <q-card style="width: 50vw">
         <q-card-section>
@@ -53,11 +75,15 @@
       :data="films"
       :columns="columns"
       :pagination.sync="pagination"
+      :loading="loading"
       @request="onRequest">
       <template v-slot:body="props">
         <q-tr :props="props">
           <q-td key="titolo_italiano" :props="props">
             {{ props.row.titolo_italiano }}
+          </q-td>
+          <q-td key="genere" :props="props">
+            {{ props.row.genere }}
           </q-td>
           <q-td key="anno" :props="props">
             {{ props.row.anno }}
@@ -88,6 +114,10 @@
         </q-tr>
       </template>
     </q-table>
+
+    <q-page-sticky position="bottom-right" :offset="[28, 28]">
+      <q-btn fab icon="search" color="primary" @click="showSearch = true" :disable="loading"/>
+    </q-page-sticky>
   </div>
 </template>
 
@@ -96,6 +126,10 @@
 export default {
   data() {
     return {
+      searchTitolo: '',
+      searchGenere: '',
+      searchAnno: '',
+      showSearch: false,
       loading: false,
       viewFilmOpen: false,
       viewFilm: null,
@@ -115,8 +149,9 @@ export default {
       columns: [
         {
           name: 'titolo_italiano', label: 'Titolo italiano', align: 'left',
-          field: 'titolo_italiano', sortable: true, style: 'width: 30%',
+          field: 'titolo_italiano', sortable: true, style: 'width: 25%',
         },
+        {name: 'genere', align: 'left', label: 'Genere', field: 'genere', sortable: true, style: 'width: 10%'},
         {name: 'anno', align: 'right', label: 'Anno', field: 'anno', sortable: true, style: 'width: 10%'},
         {
           name: 'voto_medio', align: 'center', label: 'Voto medio',
@@ -124,7 +159,7 @@ export default {
         },
         {name: 'durata', align: 'right', label: 'Durata', field: 'durata', sortable: true, style: 'width: 5%'},
         {name: 'attori', align: 'left', label: 'Attori', style: 'width: 40%'},
-        {name: 'action', align: 'left', label: 'Azioni', style: 'width: 10%'},
+        {name: 'action', align: 'left', label: 'Azioni', style: 'width: 5%'},
       ],
     };
   },
@@ -137,7 +172,20 @@ export default {
       });
     },
     loadPaginatedFilms(params) {
+      this.showSearch = false;
       this.loading = true;
+      if (typeof this.searchTitolo === 'string' && this.searchTitolo) {
+        if (!params) params = {};
+        params.titolo = this.searchTitolo;
+      }
+      if (typeof this.searchGenere === 'string' && this.searchGenere) {
+        if (!params) params = {};
+        params.genere = this.searchGenere;
+      }
+      if (typeof this.searchAnno === 'string' && this.searchAnno) {
+        if (!params) params = {};
+        params.anno = this.searchAnno;
+      }
       this.$api.paginatedFilms(params).then(({paginatedFilms, totalFilms, pageNum, pageSize, sortBy, descending}) => {
         this.films = paginatedFilms;
         this.pagination.rowsNumber = totalFilms;
@@ -148,6 +196,8 @@ export default {
       }).catch(err => {
         this.$q.notify('Impossibile caricare i film');
         console.error(err);
+      }).finally(() => {
+        this.loading = false;
       })
     },
     openFilm(id) {
@@ -187,6 +237,11 @@ export default {
       }
       durationLang = durationLang.substring(0, durationLang.length - 1);
       return durationLang;
+    },
+    resetSearch() {
+      this.searchTitolo = '';
+      this.searchGenere = '';
+      this.searchAnno = '';
     },
   },
   created() {
