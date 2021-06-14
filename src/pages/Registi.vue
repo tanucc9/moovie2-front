@@ -27,7 +27,8 @@
                     appear
                     enter-active-class="animated slideInLeft"
                 >
-                    <q-input rounded filled v-model="dataInizio" label="Anno d'inizio">
+                    <q-input rounded filled v-model="dataInizio" label="Anno d'inizio"
+                        :rules="[ val => (val.match(/^[0-9]{4}$/) || val === '') || 'Errore! L\'anno deve avere il formato YYYY.' ]">
                         <template v-slot:prepend>
                             <q-icon name="event" />
                         </template>
@@ -39,19 +40,24 @@
                     appear
                     enter-active-class="animated slideInRight"
                 >
-                    <q-input rounded filled v-model="dataFine" label="Anno di fine">
+                    <q-input 
+                     rounded
+                     filled 
+                     v-model="dataFine" 
+                     label="Anno di fine" 
+                     :rules="[ val => ( (val.match(/^[0-9]{4}$/) && val >= this.dataInizio) || val === '') || 'Errore! L\'anno deve avere il formato YYYY e deve essere maggiore della data di inizio.' ]">
                         <template v-slot:prepend>
                             <q-icon name="event" />
                         </template>
                     </q-input>
                 </transition>
             </div>
-            <div class="q-gutter-y-md column justify-center container-btn-filter">
+            <div class="q-gutter-y-md column container-btn-filter">
                 <transition
                     appear
                     enter-active-class="animated slideInRight"
                 >
-                    <q-btn push color="primary" label="Applica" id="btn-filtro-data"/>
+                    <q-btn push color="primary" label="Applica" id="btn-filtro-data" @click="applyFiltersDatas"/>
                 </transition>
             </div>
         </div>
@@ -60,7 +66,7 @@
 
     <!--- Body classifica best director --->
     <div class="row items-end" id="section-best-director">
-      <div class="col-md-4" v-for="(director, index) in mockBestDirector" :key="index">
+      <div class="col-md-4" v-for="(director, index) in bestDirectors" :key="index">
         <q-card class="my-card" :class="{ 'float-right' : index === 0, 'center-card' : index === 1 }">
             <q-badge class="custom-badge-rounded" :class="{'bg-yellow-14' : index === 0, 'bg-grey-13' : index === 1, 'bg-brown-6' : index === 2}" floating >
                 {{index + 1}}
@@ -68,7 +74,7 @@
 
             <span class="material-icons account_circle">account_circle</span>
             <q-card-section class="wrap-title-director">
-                <div class="text-h6">{{director[0]}}</div>
+                <div class="text-h6">{{director._id}}</div>
             </q-card-section>
             <div class="row items-center justify-center">
                 <p class="voto-medio">
@@ -78,18 +84,18 @@
                 <q-circular-progress
                 show-value
                 class="text-light-blue q-ma-md"
-                :value="director[2] * 10"
+                :value="director.media_voti * 10"
                 size="50px"
                 color="blue"
                 track-color="grey-3"
                 >
-                {{director[2]}}
+                {{Number((director.media_voti).toFixed(2))}}
                 </q-circular-progress>
             </div>
             
             <q-card-section class="q-pt-none">
                 <q-chip square>
-                    <q-avatar color="blue" text-color="white">{{director[1]}}</q-avatar>
+                    <q-avatar color="blue" text-color="white">{{director.film_girati}}</q-avatar>
                     film girati
                 </q-chip>
 
@@ -98,16 +104,35 @@
       </div>
 
     </div>
+    <div class="q-pa-lg flex flex-center" v-show="noResultsBestDirector">
+        <h6>Nessun risultato trovato con i filtri inseriti.</h6>
+    </div>
     <!--- END Body classifica best director --->
 
     <!--- Sezione registi con più film girati ---> 
-    <RegistiList :datas="mockMostFilms" :isMostFilms="true" titleList ="I 5 registi con più film girati" />
+    <RegistiList :datas="registiMostFilmsDatas" :isMostFilms="true" titleList ="I 5 registi con più film girati" />
     <!--- END Sezione registi con più film girati --->
 
 
     <!--- Sezione registi con media più alta --->
-    <RegistiList :datas="mockMediaFilms" :isMostFilms="false" titleList ="I 5 registi con la media più alta su un film" />
+    <RegistiList :datas="registiMediaFilms" :isMostFilms="false" titleList ="I 5 registi con la media più alta" />
     <!--- END Sezione registi con con media più alta --->
+
+        <q-dialog v-model="alertFilter">
+            <q-card>
+                <q-card-section>
+                <div class="text-h6">Errore!</div>
+                </q-card-section>
+
+                <q-card-section class="q-pt-none">
+                Controlla di aver inserito correttamente le date.
+                </q-card-section>
+
+                <q-card-actions align="right">
+                <q-btn flat label="OK" color="primary" v-close-popup />
+                </q-card-actions>
+            </q-card>
+        </q-dialog>
 
     </q-page>
 </template>
@@ -123,22 +148,15 @@ export default {
     },
   data() {
       return {
+          noResultsBestDirector: false,
+          alertFilter: false,
           dataInizio : '',
           dataFine : '',
           isFilterYearVisible : false,
           counter : 2,
-          mockBestDirector : [
-            ['Lello Kawasaki', 21, 9.3],
-            ['Toni Colombo', 30, 8.5],
-            ['Peppe', 3, 7.0]
-          ],
-          mockMostFilms : [
-            ['Lello Kawasaki', 121],
-            ['Toni Colombo', 92],
-            ['Peppe', 65],
-            ['Mario Rossi', 44],
-            ['Pepito Rossi', 39]
-          ],
+          bestDirectors : [],
+          registiMostFilmsDatas : [],
+          registiMediaFilms: [],
            mockMediaFilms : [
             ['Lello Kawasaki', 9.8],
             ['Toni Colombo', 8.9],
@@ -150,11 +168,47 @@ export default {
   },
   methods: {
       loadBestDirectors : function () {
-          
+        this.$api.registiBest(
+            this.dataInizio !== '' ? this.dataInizio : 0,
+            this.dataFine !== '' ? this.dataFine : 0
+        ).then((registi) => {
+            console.log(registi);
+            this.bestDirectors = registi;
+
+            this.noResultsBestDirector = this.bestDirectors.length < 1 ? true : false;
+        })
+      },
+      applyFiltersDatas : function () {
+
+          //Validazione delle date
+          if( (this.dataInizio <= this.dataFine) 
+                || (this.dataInizio !== '' && this.dataFine === '')
+                || (this.dataInizio === '' && this.dataFine === '') 
+            ) {
+                this.loadBestDirectors();
+            } else {
+                this.alertFilter = true;
+            }
+      },
+      loadRegistiMostFilms : function () {
+          this.$api.registiMostFilms()
+          .then((registi) => {
+              console.log(registi);
+              this.registiMostFilmsDatas = registi;
+          })
+      },
+      loadRegistiMediaFilms : function () {
+          this.$api.registiMediaFilms()
+          .then((registi) => {
+                console.log(registi);
+                this.registiMediaFilms = registi;
+          })
       }
   },
   created () {
-
+      this.loadBestDirectors();
+      this.loadRegistiMostFilms();
+      this.loadRegistiMediaFilms();
   }
 }
 </script>

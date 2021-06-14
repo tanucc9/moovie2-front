@@ -10,12 +10,12 @@
 
             <span class="material-icons account_circle">account_circle</span>
             <q-card-section class="wrap-title-director">
-                <div class="text-h6">{{director[0]}}</div>
+                <div class="text-h6">{{director._id}}</div>
             </q-card-section>
             
             <q-card-section class="q-pt-none q-mt-md">
                 <q-chip square v-if="isMostFilms">
-                    <q-avatar color="blue" text-color="white">{{director[1]}}</q-avatar>
+                    <q-avatar color="blue" text-color="white">{{director.film_girati}}</q-avatar>
                     film girati
                 </q-chip>
 
@@ -26,12 +26,12 @@
                     <q-circular-progress
                     show-value
                     class="text-light-blue q-ma-md"
-                    :value="director[1] * 10"
+                    :value="director.media_voti * 10"
                     size="50px"
                     color="blue"
                     track-color="grey-3"
                     >
-                        {{director[1]}}
+                        {{Number((director.media_voti).toFixed(2))}}
                     </q-circular-progress>
                 </div>
 
