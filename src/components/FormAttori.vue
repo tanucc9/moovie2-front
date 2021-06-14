@@ -34,10 +34,28 @@
                 :rules="[ val => ( val.match(/^[0-9]+/) || val === '') || 'Errore! La durata minima deve avere un valore numerico.' ]"
             />
       </div>
-      <div class="col-md-2 column justify-center">
-          <q-btn push color="primary" label="Filtra" />
+      <div class="col-md-1 column justify-center">
+          <q-btn push color="primary" label="Filtra" @click="submitFilter"/>
+      </div>
+            <div class="col-md-1 column justify-center">
+          <q-btn push outline color="primary" label="Reset" @click="resetFilter"/>
       </div>
     </div>
+        <q-dialog v-model="alertFilter">
+            <q-card>
+                <q-card-section>
+                <div class="text-h6">Errore!</div>
+                </q-card-section>
+
+                <q-card-section class="q-pt-none">
+                uno tra i campi "anno" e "genere" deve essere compilato.
+                </q-card-section>
+
+                <q-card-actions align="right">
+                <q-btn flat label="OK" color="primary" v-close-popup />
+                </q-card-actions>
+            </q-card>
+        </q-dialog>
     </div>
 </template>
 
@@ -46,16 +64,56 @@
 export default {
     data() {
         return {
+            alertFilter : false,
             anno : '',
             durataMinima: '',
             valSelectGenere : '',
             optionsGenere : [
-                'Fantasy',
-                'Horror',
-                'Comici',
-                'Azione',
-                'Drammatici'
+                "Commedia",
+                "Avventura",
+                "Storico",
+                "Western",
+                "Drammatico",
+                "Poliziesco",
+                "Sentimentale",
+                "Thriller",
+                "Fantasy",
+                "Guerra",
+                "Biografico",
+                "Spionaggio",
+                "Azione",
+                "Horror",
+                "Catastrofico",
+                "Animazione",
+                "Documentario",
+                "Musicale",
+                "Mitologico",
+                "Noir",
+                "Grottesco",
+                "Gangster",
+                "Sperimentale",
+                "Mélo",
+                "Supereroi",
+                "Biblico",
+                "Sportivo"
             ]
+        }
+    },
+    methods: {
+        submitFilter : function () {
+            if (this.anno === '' && this.valSelectGenere === '') {
+                this.alertFilter = true;
+                return;
+            } else {
+                this.$emit('filtered-Actors', this.anno, this.durataMinima, this.valSelectGenere, false);
+            }
+        },
+        resetFilter : function () {
+            this.anno = '';
+            this.durataMinima = '';
+            this.valSelectGenere = '';
+
+            this.$emit('reset-filters');
         }
     }
 }

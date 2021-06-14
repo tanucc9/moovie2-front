@@ -1,10 +1,23 @@
 <template>
     <q-page>
-        <FormAttori />
+        <FormAttori @filtered-Actors="attoriFiltered" @reset-filters="resetFilters"/>
         <div class="row container-attori">
-            <div class="col-sm-6" :class="{'left-side' : index % 2 === 0, 'right-side' : index % 2 !== 0}" v-for="(attore, index) in attoriMock" :key="index">
+            <div class="col-sm-6" :class="{'left-side' : index % 2 === 0, 'right-side' : index % 2 !== 0}"
+             v-for="(attore, index) in attori" :key="index">
                 <AttoreSection :nomeAttore="attore.nome" :films="attore.films"/>
             </div>
+        </div>
+        <div class="q-pa-lg flex flex-center" v-show="noResults">
+            <h4>Nessun risultato trovato con i filtri inseriti.</h4>
+        </div>
+        <div class="q-pa-lg flex flex-center">
+            <q-pagination
+                v-model="currentPagePagination"
+                :max="nLastPage"
+                input
+                class="pagination-attori"
+            />
+            attori per pagina: <q-select v-model="numPerPage" :options="optionsNumPerPage" class="selectNumPerPage"/>
         </div>
     </q-page>
 </template>
@@ -21,149 +34,96 @@ export default {
     },
     data() {
         return {
-            attoriMock : [
-                {
-                    nome : 'Lello Kawasaki',
-                    films : [
-                        {
-                            nome : 'Il ritorno di R',
-                            durata : '125',
-                            voto : '7.9'
-                        },
-                        {
-                            nome : 'Il ritorno di R1',
-                            durata : '100',
-                            voto : '9'
-                        },
-                        {
-                            nome : 'Il ritorno di R3',
-                            durata : '105',
-                            voto : '7.2'
-                        },
-                        {
-                            nome : 'Il ritorno di C',
-                            durata : '25',
-                            voto : '4.9'
-                        },
-                        {
-                            nome : 'Il ritorno di C++',
-                            durata : '120',
-                            voto : '6.5'
-                        },
-                        {
-                            nome : 'Il ritorno di R3, la vendemmia',
-                            durata : '300',
-                            voto : '10'
-                        },                    
-                    ], 
-                },
-                {
-                    nome : 'Ciruzz Mertens',
-                    films : [
-                        {
-                            nome : 'A caccia di R',
-                            durata : '125',
-                            voto : '7.9'
-                        },
-                        {
-                            nome : 'A caccia di R R1',
-                            durata : '100',
-                            voto : '9'
-                        },
-                        {
-                            nome : 'A caccia di R3',
-                            durata : '105',
-                            voto : '7.2'
-                        },
-                        {
-                            nome : 'A caccia di C',
-                            durata : '25',
-                            voto : '4.9'
-                        },
-                        {
-                            nome : 'A caccia di C++',
-                            durata : '120',
-                            voto : '6.5'
-                        },
-                        {
-                            nome : 'A caccia di vendemmia',
-                            durata : '300',
-                            voto : '10'
-                        },                    
-                    ], 
-                },
-                {
-                    nome : 'Pino Pinu',
-                    films : [
-                        {
-                            nome : 'Il ritorno di R',
-                            durata : '12',
-                            voto : '7.9'
-                        },
-                        {
-                            nome : 'Il ritorno di R1',
-                            durata : '109',
-                            voto : '10'
-                        },
-                        {
-                            nome : 'Il ritorno di R3',
-                            durata : '123',
-                            voto : '2'
-                        },
-                        {
-                            nome : 'Il ritorno di C',
-                            durata : '253',
-                            voto : '5'
-                        },
-                        {
-                            nome : 'Il ritorno di C++',
-                            durata : '120',
-                            voto : '6.5'
-                        },
-                        {
-                            nome : 'Il ritorno di R3, la vendemmia',
-                            durata : '300',
-                            voto : '10'
-                        },                    
-                    ], 
-                },
-                {
-                    nome : 'Mario Rossi',
-                    films : [
-                        {
-                            nome : 'Il ritorno di R',
-                            durata : '12',
-                            voto : '7.9'
-                        },
-                        {
-                            nome : 'Il ritorno di R1',
-                            durata : '109',
-                            voto : '10'
-                        },
-                        {
-                            nome : 'Il ritorno di R3',
-                            durata : '123',
-                            voto : '2'
-                        },
-                        {
-                            nome : 'Il ritorno di C',
-                            durata : '253',
-                            voto : '5'
-                        },
-                        {
-                            nome : 'Il ritorno di C++',
-                            durata : '120',
-                            voto : '6.5'
-                        },
-                        {
-                            nome : 'Il ritorno di R3, la vendemmia',
-                            durata : '300',
-                            voto : '10'
-                        },                    
-                    ], 
-                },
-            ],
+            noResults : false,
+            noFilter : true,
+            filterYear : '',
+            filterGenere : '',
+            filterDurata : '',
+            attori : [],
+            currentPagePagination : 1,
+            numPerPage: 20,
+            nLastPage : 0,
+            optionsNumPerPage : [
+                20, 50, 100, 200, 500
+            ]
         }
+    },
+    methods: {
+        loadPaginatedAttori : function (numPage, numPerPage) {
+            this.$api.loadAttori(numPage, numPerPage).then((attori) => {
+                this.noResults = false;
+                this.attori = attori.attoriResult;                             
+                this.manageNumPagePagination(attori.numMaxRecord);
+            }).catch(err => {
+                this.$q.notify('Impossibile caricare gli attori');
+                console.error(err);
+            });
+        },
+        loadPaginatedAttoriWithFilter : function () {
+            this.$api.loadAttoriFiltered(this.currentPagePagination, 
+                                        this.numPerPage, 
+                                        this.filterYear !== '' ? this.filterYear : 0, 
+                                        this.filterDurata !== '' ? this.filterDurata : 0, 
+                                        this.filterGenere !== '' ? this.filterGenere : 'null')
+            .then((attori) => {
+                if(attori.attoriResult.length > 0) {
+                    this.noResults = false;
+                    this.attori = attori.attoriResult; 
+                    console.log(attori.numMaxRecord);
+                    this.manageNumPagePagination(attori.numMaxRecord);
+                } else {
+                    this.noResults = true;
+                    this.attori = [];
+                    this.numPage = 1;
+                    this.nLastPage = 1;
+                }
+            }).catch(err => {
+                this.$q.notify('Impossibile caricare gli attori');
+                console.error(err);
+            });
+        },
+        manageNumPagePagination : function (numRecords) {
+            //Gestione numero totale pagine in paginazione
+            this.nLastPage = parseInt(numRecords) / this.numPerPage;
+
+            const decimalNumberPage = this.nLastPage.toString().split('.')[0];
+                
+            if( (parseInt(numRecords) % this.numPerPage) !== 0 )
+                    this.nLastPage = parseInt(decimalNumberPage) + 1;   
+        },
+        attoriFiltered : function (anno, durataMinima, valSelectGenere, noFilter) {
+            this.filterYear = anno;
+            this.filterDurata = durataMinima;
+            this.filterGenere = valSelectGenere;
+            this.noFilter = noFilter;
+
+            this.loadPaginatedAttoriWithFilter();
+        },
+        resetFilters : function () {
+            this.noFilter = true;
+            this.filterYear = '';
+            this.filterGenere = '';
+            this.filterDurata = '';
+
+            this.loadPaginatedAttori(this.numPage, this.numPerPage);
+        }
+    },
+    watch: {
+        currentPagePagination : function(newValue, oldValue) {
+            if (this.noFilter)
+                this.loadPaginatedAttori(newValue, this.numPerPage);
+            else
+                this.loadPaginatedAttoriWithFilter();
+        },
+        numPerPage : function (newValue, oldValue) {
+            if (this.noFilter)
+                this.loadPaginatedAttori(this.currentPagePagination, newValue);
+            else
+                this.loadPaginatedAttoriWithFilter();
+        }
+    },
+    created() {
+        this.loadPaginatedAttori(this.currentPagePagination, this.numPerPage);
     },
 }
 </script>
@@ -187,6 +147,13 @@ export default {
 
     .container-attori {
         margin-top: 30px;
+    }
+
+    .selectNumPerPage {
+        margin-left: 10px;
+    }
+    .pagination-attori {
+        margin-right: 30px;
     }
 
     @media (max-width: 1300px) {

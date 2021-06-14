@@ -12,12 +12,12 @@
                 <template v-slot="{ item, index }">
                 <q-item :key="index">
                     <q-item-section>
-                        <q-item-label>{{ item.nome }}</q-item-label>
+                        <q-item-label>{{ item.titolo_originale }}</q-item-label>
                         <q-item-label caption>Durata del film: {{ item.durata }} minuti.</q-item-label>
                     </q-item-section>
 
                     <q-item-section side top>
-                        <q-badge color="teal" > {{ item.voto }} </q-badge>
+                        <q-badge color="blue" > voto: {{ item.voto_medio }} </q-badge>
                     </q-item-section>
                 </q-item>
                 </template>

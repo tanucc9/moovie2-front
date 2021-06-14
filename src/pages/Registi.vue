@@ -148,6 +148,14 @@ export default {
           ],
       }
   },
+  methods: {
+      loadBestDirectors : function () {
+          
+      }
+  },
+  created () {
+
+  }
 }
 </script>
 

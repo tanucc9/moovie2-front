@@ -61,7 +61,7 @@ module.exports = function (/* ctx */) {
       // analyze: true,
 
       env: {
-        API_URL: 'http://localhost:8080',
+        API_URL: 'http://localhost:8081',
       },
 
       // Options below are automatically set depending on the env, set them if you want to override

@@ -24,4 +24,10 @@ Vue.prototype.$api = {
   loadGeneriVotiFilteredFilms: (genere, votiMinimi) => apiAxiosInstance
     .get('film/genere/' + genere + '/voti-minimi/' + votiMinimi).then(response => response.data),
 
+   loadAttori: (page, numPerPage) => apiAxiosInstance.get('/attori/paginated/page/' + page + '/perpage/' + numPerPage)
+   .then(response => response.data),
+
+   loadAttoriFiltered: (page, numPerPage, anno, durata, genere) => apiAxiosInstance.get('/attori/anno-film/' + anno + '/durata/' + durata + '/genere/' + genere + '/npage/' + page + '/perpage/' +numPerPage)
+   .then(response => response.data),
+
 }
