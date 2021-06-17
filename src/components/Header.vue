@@ -7,7 +7,8 @@
           </q-avatar>
 
           <q-toolbar-title>Moovie2</q-toolbar-title>
-
+        
+        <!---
           <transition
             appear
             enter-active-class="animated bounceInRight"
@@ -21,8 +22,9 @@
         </transition>
         
           <q-btn flat round dense icon="search" v-if="!activeSearchBar" @click="activeSearchBar = !activeSearchBar"/>
+        --->
+        
         </q-toolbar>
-
         <q-tabs v-model="tab">
           <q-route-tab to="/" name="film" label="Film" />
           <q-route-tab to="/attori" name="attori" label="Attori" />
