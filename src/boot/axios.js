@@ -27,7 +27,7 @@ Vue.prototype.$api = {
    loadAttori: (page, numPerPage) => apiAxiosInstance.get('/attori/paginated/page/' + page + '/perpage/' + numPerPage)
    .then(response => response.data),
 
-   loadAttoriFiltered: (page, numPerPage, anno, durata, genere) => apiAxiosInstance.get('/attori/anno-film/' + anno + '/durata/' + durata + '/genere/' + genere + '/npage/' + page + '/perpage/' +numPerPage)
+   loadAttoriFiltered: (params) => apiAxiosInstance.get('/attori/filtered' + params)
    .then(response => response.data),
 
    registiBest: (from, to) => apiAxiosInstance.get('/registi/best/from/' + from + '/to/' + to)

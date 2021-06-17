@@ -39,6 +39,7 @@ export default {
             filterYear : '',
             filterGenere : '',
             filterDurata : '',
+            filterNome : '',
             attori : [],
             currentPagePagination : 1,
             numPerPage: 20,
@@ -60,11 +61,18 @@ export default {
             });
         },
         loadPaginatedAttoriWithFilter : function () {
-            this.$api.loadAttoriFiltered(this.currentPagePagination, 
-                                        this.numPerPage, 
-                                        this.filterYear !== '' ? this.filterYear : 0, 
-                                        this.filterDurata !== '' ? this.filterDurata : 0, 
-                                        this.filterGenere !== '' ? this.filterGenere : 'null')
+            let params = '?';
+
+            params += "page="+ this.currentPagePagination;
+            params += "&perpage=" + this.numPerPage;
+            params += this.filterYear !== '' ? "&anno=" + this.filterYear : '';
+            params += this.filterDurata !== '' ? "&durata=" + this.filterDurata : '';
+            params += this.filterGenere !== '' ? "&genere=" + this.filterGenere : '';
+            params += this.filterNome !== '' ? "&nome=" + this.filterNome : '';
+
+            console.log(params)
+
+            this.$api.loadAttoriFiltered(params)
             .then((attori) => {
                 if(attori.attoriResult.length > 0) {
                     this.noResults = false;
@@ -91,10 +99,11 @@ export default {
             if( (parseInt(numRecords) % this.numPerPage) !== 0 )
                     this.nLastPage = parseInt(decimalNumberPage) + 1;   
         },
-        attoriFiltered : function (anno, durataMinima, valSelectGenere, noFilter) {
+        attoriFiltered : function (anno, durataMinima, valSelectGenere, nomeAttore, noFilter) {
             this.filterYear = anno;
             this.filterDurata = durataMinima;
             this.filterGenere = valSelectGenere;
+            this.filterNome = nomeAttore;
             this.noFilter = noFilter;
 
             this.loadPaginatedAttoriWithFilter();

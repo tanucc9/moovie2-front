@@ -34,6 +34,16 @@
                 :rules="[ val => ( val.match(/^[0-9]+/) || val === '') || 'Errore! La durata minima deve avere un valore numerico.' ]"
             />
       </div>
+
+        <div class="col-sm-2 full-mobile">
+            <q-input 
+                rounded
+                filled
+                v-model="nomeAttore" 
+                label="Ricerca per nome"
+            />
+        </div>
+
       <div class="col-md-1 column justify-center">
           <q-btn push color="primary" label="Filtra" @click="submitFilter"/>
       </div>
@@ -48,7 +58,7 @@
                 </q-card-section>
 
                 <q-card-section class="q-pt-none">
-                uno tra i campi "anno" e "genere" deve essere compilato.
+                uno tra i campi "anno", "genere" o "nome" deve essere compilato.
                 </q-card-section>
 
                 <q-card-actions align="right">
@@ -68,6 +78,7 @@ export default {
             anno : '',
             durataMinima: '',
             valSelectGenere : '',
+            nomeAttore : '',
             optionsGenere : [
                 "Commedia",
                 "Avventura",
@@ -101,17 +112,18 @@ export default {
     },
     methods: {
         submitFilter : function () {
-            if (this.anno === '' && this.valSelectGenere === '') {
+            if (this.anno === '' && this.valSelectGenere === '' && this.nomeAttore === '') {
                 this.alertFilter = true;
                 return;
             } else {
-                this.$emit('filtered-Actors', this.anno, this.durataMinima, this.valSelectGenere, false);
+                this.$emit('filtered-Actors', this.anno, this.durataMinima, this.valSelectGenere, this.nomeAttore, false);
             }
         },
         resetFilter : function () {
             this.anno = '';
             this.durataMinima = '';
             this.valSelectGenere = '';
+            this.nomeAttore = '';
 
             this.$emit('reset-filters');
         }
@@ -126,7 +138,7 @@ export default {
     .section-filter h5 {
         margin-bottom: 0!important;
         margin-top: 0!important;
-        padding-left: 7%;
+        padding-left: 3%;
     }
     .section-filter {
         margin-top: 30px;
