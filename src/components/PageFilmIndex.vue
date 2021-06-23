@@ -76,6 +76,7 @@
       :columns="columns"
       :pagination.sync="pagination"
       :loading="loading"
+      :rows-per-page-options="[5, 7, 10, 15, 20, 25, 50]"
       @request="onRequest">
       <template v-slot:body="props">
         <q-tr :props="props">
